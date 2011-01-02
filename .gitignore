@@ -1,4 +1,5 @@
 *.pyc
+*.egg-info
 db
 bin/
 lib/
@@ -6,6 +7,8 @@ include/
 *.swp
 *.swo
 *.sql
-!schema.sql
-static/store/
-static/*.css
+!app365/schema.sql
+app365/static/store
+app365/static/*.css
+dist
+build

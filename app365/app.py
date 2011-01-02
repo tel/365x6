@@ -8,9 +8,10 @@ import Image as PIL
 import os.path
 
 from flask import *
+import config
 
 app = Flask(__name__)
-app.config.from_object('config')
+app.config.from_object(config)
 app.config.from_envvar('365X6_SETTINGS', silent = True)
 
 def get_db():
