@@ -1,0 +1,11 @@
+*.pyc
+db
+bin/
+lib/
+include/
+*.swp
+*.swo
+*.sql
+!schema.sql
+static/store/
+static/*.css

@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>365 x 6</title>
+<link rel=stylesheet href="static/screen.css">
+<link rel=stylesheet href="static/fancybox/jquery.fancybox-1.3.4.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+<script type="text/javascript" src="http://localhost:5000/static/fancybox/jquery.fancybox-1.3.4.js"></script>
+
+<style>
+</style>
+
+<h1>365 x 6</h1>
+
+<div id="set">
+    <div>
+        {% for name in names %}
+        <a class="full" 
+            id="{{ name }}_image" 
+            href="static/store/{{ images[name] }}_full.jpg" 
+            rel="shots"
+            title="Photographer: {{ name }}">
+            <img src="static/store/{{ images[name] }}_thumb.jpg">
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+
+    function fancyboxFormatTitle(title, ary, idx, opts) {
+        return '<div class="fancyboxTitle"><span><strong>' + title + '</strong></span></div>'
+    }
+
+    $(document).ready(function () {
+        $("#set a").fancybox({
+            'transitionIn': 'fade',
+            'transitionOut': 'fade',
+            'speedIn': 200,
+            'speedOut': 100,
+            'cyclic': true,
+            'width': 600,
+            'height': 600,
+            'overlayShow': true,
+            'overlayColor': '#222',
+            'overlayOpacity': 0.9,
+            'titleShow': true,
+            'titlePosition': 'over',
+            'onComplete':  function () {
+                $('#fancybox-wrap').hover(function () {
+                    $('#fancybox-title').show();
+                }, function () {
+                    $('#fancybox-title').hide();
+                })
+            }
+        })
+    })
+</script>

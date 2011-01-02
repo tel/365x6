@@ -1,0 +1,11 @@
+Flask==0.6
+Flask-Cache==0.3.2
+Flask-Uploads==0.1.2
+Jinja2==2.5.5
+PIL==1.1.7
+Werkzeug==0.6.2
+distribute==0.6.14
+flask-lesscss==0.9.1
+hashlib==20081119
+pysqlite==2.6.0
+wsgiref==0.1.2
