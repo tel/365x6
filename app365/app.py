@@ -122,16 +122,17 @@ def after_request(response):
 
 @app.route('/')
 def index():
+    day = Day.current(g.db)
     query = """
     select photographers.name, photos.hash 
     from joiner, photographers, photos, days 
-    where date(days.ts) = date('now') 
+    where days.id = ?
         and days.id = joiner.day_id 
         and photos.id = joiner.photo_id 
         and photos.photographer = photographers.id
     order by photographers.id asc;
     """
-    cur = g.db.execute(query)
+    cur = g.db.execute(query, [day.id])
     rows = cur.fetchall()
 
     names = ['Joe', 'Henry', 'Janet', 'Megan', 'Kento', 'Chanh']
