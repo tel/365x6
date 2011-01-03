@@ -8,7 +8,7 @@ setup(
 
     package_data = {
         'app365' : ['schema.sql', 'templates/*', 
-                    'static/*.less', 'static/i/*', 'static/fancybox/*']
+                    'static/css/*.css', 'static/css/*.less', 'static/css/i/*', 'static/fancybox/*']
     }
 )
 

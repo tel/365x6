@@ -40,7 +40,8 @@ def serve():
 
 def make_sdist():
     with cd(HOME):
-        local("rm -r dist")
+        with settings(warn_only = True):
+            local("rm -r dist")
         local("python setup.py sdist")
         return local("ls dist")
 
@@ -49,6 +50,8 @@ def deploy(env = "~/pyenv"):
     name = make_sdist()
     put(os.path.join(HOME, "dist", name), "~/tmp/") 
     with cd("~/tmp/"):
+        with settings(warn_only = True):
+            run("~/run/bin/pip -E %s uninstall app365" % env)
         run("~/run/bin/pip -E %s install %s" % (env, name))
         run("rm %s" % name)
     with cd("~/photo365.kronka.com"):

@@ -9,6 +9,5 @@ include/
 *.sql
 !app365/schema.sql
 app365/static/store
-app365/static/*.css
 dist
 build

@@ -126,6 +126,7 @@ def link_image(db, image, day):
 @app.before_request
 def before_request():
     g.db = get_db()
+    g.static = lambda path: app.config['STATIC_URL'] + path
 
 @app.after_request
 def after_request(response):

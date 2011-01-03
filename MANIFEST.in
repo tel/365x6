@@ -1,6 +1,5 @@
 recursive-include app365/static/fancybox *
-include app365/static/i/*
-include app365/static/*.less
+recursive-include app365/static/css *
 include app365/schema.sql
 include app365/
 include deps.txt
