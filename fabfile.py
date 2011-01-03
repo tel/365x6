@@ -1,11 +1,12 @@
 from __future__ import with_statement
 from contextlib import closing
 import os.path
+import os
 
 from fabric.api import *
 from fabric.utils import puts, warn
 
-import app
+import app365.app as app
 
 HOME = os.path.dirname(__file__)
 
@@ -33,3 +34,22 @@ def add_image(photographer, path):
         app.link_image(db, image, day)
         db.commit()
     local('rm %s' % path)
+
+def serve():
+    app.app.run(debug=True)
+
+def make_sdist():
+    with cd(HOME):
+        local("rm -r dist")
+        local("python setup.py sdist")
+        return local("ls dist")
+
+@hosts("photo365@photo365.kronka.com")
+def deploy(env = "~/pyenv"):
+    name = make_sdist()
+    put(os.path.join(HOME, "dist", name), "~/tmp/") 
+    with cd("~/tmp/"):
+        run("~/run/bin/pip -E %s install %s" % (env, name))
+        run("rm %s" % name)
+    with cd("~/photo365.kronka.com"):
+        run("touch tmp/restart.txt")
