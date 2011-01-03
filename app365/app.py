@@ -37,6 +37,12 @@ class Image(object):
             im.hash = hashlib.md5(f.read()).hexdigest()
         return im
 
+    @classmethod
+    def fromhash(cls, hash):
+        im = cls()
+        im.hash = hash
+        return im
+
     def store(self, db):
         # Check to see if this file already is stored
         cur = db.execute('select id from photos where hash = (?);', (self.hash,))
@@ -71,6 +77,12 @@ class Image(object):
 
     def thumbpath(self):
         return os.path.join(app.config['IMAGE_PATH'], self.hash + '_thumb.jpg')
+
+    def fullurl(self):
+        return app.config['IMAGE_URL'] + self.hash + '_full.jpg'
+
+    def thumburl(self):
+        return app.config['IMAGE_URL'] + self.hash + '_thumb.jpg'
 
 class Day(object):
     __slots__ = ('id', 'color', 'date')
@@ -138,13 +150,13 @@ def index():
     names = ['Joe', 'Henry', 'Janet', 'Megan', 'Kento', 'Chanh']
     images = defaultdict(lambda: 'missing')
     for name, hash in rows:
-        images[name] = hash
+        images[name] = Image.fromhash(hash)
 
     return render_template('index.html', images=images, names=names)
 
-@app.route('/view/<key>')
-def view_photo_by_key(key):
-    pass
+#@app.route('/view/<key>/')
+#def view_photo_by_key(key):
+    #pass
 
 if __name__ == '__main__':
     from flaskext.lesscss import lesscss

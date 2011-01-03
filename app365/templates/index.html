@@ -16,10 +16,10 @@
         {% for name in names %}
         <a class="full" 
             id="{{ name }}_image" 
-            href="static/store/{{ images[name] }}_full.jpg" 
+            href="{{ images[name].fullurl() }}" 
             rel="shots"
             title="Photographer: {{ name }}">
-            <img src="static/store/{{ images[name] }}_thumb.jpg">
+            <img src="{{ images[name].thumburl() }}">
         </a>
         {% endfor %}
     </div>
