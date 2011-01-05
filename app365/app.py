@@ -87,6 +87,9 @@ class Image(object):
 class Day(object):
     __slots__ = ('id', 'color', 'date')
 
+    def __init__(self, vals):
+        self.id, self.color, self.date = vals
+
     @classmethod
     def today(cls, db):
         cur = db.execute("select id, ts, color from days where date(ts) = date('now');")
@@ -94,26 +97,29 @@ class Day(object):
         if res == None:
             # Create today
             cur.execute("insert into days default values;")
-            day = cls.bynumber(db, cur.lastrowid)
+            day = cls.by_id(db, cur.lastrowid)
         else:
             # Restore today
-            day = cls()
-            day.id, day.date, day.color = res
+            day = cls(res)
         return day
 
     @classmethod
     def current(cls, db):
-        cur = db.execute("select id, ts, color from days order by id desc;")
-        day = cls()
-        day.id, day.date, day.color = cur.fetchone()
-        return day
+        cur = db.execute("""
+                select days.*
+                from days, state 
+                where days.id = state.content 
+                    and state.name like 'current_day';
+            """)
+        res = cur.fetchall()
+        if len(res) != 1:
+            raise Exception("State table of database is incomplete: no current day set.")
+        return cls(res[0])
 
     @classmethod
-    def bynumber(cls, db, id):
-        day = cls()
+    def by_id(cls, db, id):
         cur = db.execute("select id, ts, color from days where id = ?;", str(id))
-        day.id, day.date, day.color = cur.fetchone()
-        return day
+        return cls(cur.fetchone())
 
 def link_image(db, image, day):
     try:
@@ -133,9 +139,7 @@ def after_request(response):
     g.db.close()
     return response
 
-@app.route('/')
-def index():
-    day = Day.current(g.db)
+def get_images(day):
     query = """
     select photographers.name, photos.hash 
     from joiner, photographers, photos, days 
@@ -149,15 +153,32 @@ def index():
     rows = cur.fetchall()
 
     names = ['Joe', 'Henry', 'Janet', 'Megan', 'Kento', 'Chanh']
-    images = defaultdict(lambda: 'missing')
+    images = defaultdict(lambda: Image.fromhash('missing'))
     for name, hash in rows:
         images[name] = Image.fromhash(hash)
+    return names, images
 
-    return render_template('index.html', images=images, names=names)
+@app.route('/')
+def index():
+    day = Day.current(g.db)
+    names, images = get_images(day)
 
-#@app.route('/view/<key>/')
-#def view_photo_by_key(key):
-    #pass
+    return render_template('index.html', current = day, day = day, images=images, names=names)
+
+@app.route('/day/<id>/')
+def view_day(id):
+    id = int(id)
+    current = Day.current(g.db)
+    if id > current.id:
+        abort(404)
+    day = Day.by_id(g.db, id)
+    names, images = get_images(day)
+    
+    return render_template('index.html', current = current, day =day, images = images, names = names)
+
+@app.errorhandler(404)
+def not_found(e):
+    return "Not found."
 
 if __name__ == '__main__':
     from flaskext.lesscss import lesscss

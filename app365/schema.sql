@@ -9,6 +9,12 @@ create table photos(
 	foreign key (photographer) references photographers(id)
 );
 
+drop table if exists state;
+create table state(
+	name char(64) not null unique,
+	content char(255) default null
+);
+
 drop table if exists days;
 create table days(
 	id integer primary key autoincrement,

@@ -2,6 +2,7 @@ from __future__ import with_statement
 from contextlib import closing
 import os.path
 import os
+import sqlite3
 
 from fabric.api import *
 from fabric.utils import puts, warn
@@ -28,7 +29,7 @@ def update_day():
 
 def add_image(photographer, path):
     with closing(app.get_db()) as db:
-        image = app.Image.fromfile(db, path, photographer.lower().capitalize())
+        image = app.Image.fromfile(db, os.path.expanduser(path), photographer.lower().capitalize())
         image.store(db)
         day = app.Day.current(db)
         app.link_image(db, image, day)
